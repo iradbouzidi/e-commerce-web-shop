@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   CssBaseline,
   Paper,
@@ -13,9 +13,21 @@ import {
 import { Link, useHistory } from "react-router-dom";
 
 import useStyles from "./styles";
+import AddressForm from "../AddressForm";
+import PaymentForm from "../PaymentForm";
+
+const steps = ["Shipping address", "Payment details"];
 
 const Checkout = () => {
+  const [checkoutToken, setCheckoutToken] = useState(null);
+  const [activeStep, setActiveStep] = useState(0);
+  const [shippingData, setShippingData] = useState({});
   const classes = useStyles();
+  const history = useHistory();
+
+  const Confirmation = () => <div>Confirmation</div>;
+
+  const Form = () => (activeStep === 0 ? <AddressForm /> : <PaymentForm />);
   return (
     <>
       <div className={classes.toolbar} />
@@ -24,7 +36,14 @@ const Checkout = () => {
           <Typography variant="h4" align="center">
             Checkout
           </Typography>
-          <Stepper activeStep={0} className={classes.stepper}></Stepper>
+          <Stepper activeStep={activeStep} className={classes.stepper}>
+            {steps.map((label) => (
+              <Step key={label}>
+                <StepLabel>{label}</StepLabel>
+              </Step>
+            ))}
+          </Stepper>
+          {activeStep === steps.length ? <Confirmation /> : <Form />}
         </Paper>
       </main>
     </>
